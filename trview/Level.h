@@ -134,5 +134,8 @@ namespace trview
 
         bool _regenerate_transparency{ true };
         bool _alternate_mode{ false };
+    public:
+        int mesh_pointer{ 0 };
+
     };
 }

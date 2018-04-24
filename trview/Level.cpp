@@ -9,6 +9,8 @@
 #include "ICamera.h"
 #include "TransparencyBuffer.h"
 
+#include <external/DirectXTK/Inc/SimpleMath.h>
+
 namespace trview
 {
     Level::Level(CComPtr<ID3D11Device> device, const trlevel::ILevel* level)
@@ -155,6 +157,11 @@ namespace trview
         context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
         render_rooms(context, camera);
+
+        using namespace DirectX::SimpleMath;
+        auto mesh = _mesh_storage->mesh(mesh_pointer);
+        Matrix wvp = Matrix() * camera.view_projection();
+        mesh->render(context, wvp, *_texture_storage.get(), Color(1, 1, 1, 1));
     }
 
     // Render the rooms in the level.

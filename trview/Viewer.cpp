@@ -10,6 +10,7 @@
 #include <trview.ui/StackPanel.h>
 #include <trview.ui/Window.h>
 #include <trview.ui/Label.h>
+#include <trview.ui/NumericUpDown.h>
 
 #include "RoomNavigator.h"
 #include "CameraControls.h"
@@ -133,6 +134,13 @@ namespace trview
         );
 
         _control->add_child(std::move(tool_window));
+
+        auto selector = std::make_unique<NumericUpDown>(Point(300, 50), Size(50, 30), Colour(1, 0.2f, 0.2f, 0.2f), _texture_storage->lookup("numeric_up"), _texture_storage->lookup("numeric_down"), 0, 1000);
+        selector->on_value_changed += [&](int value)
+        {
+            _level->mesh_pointer = value;
+        };
+        _control->add_child(std::move(selector));
     }
 
     void Viewer::initialise_d3d()

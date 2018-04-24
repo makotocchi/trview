@@ -24,6 +24,7 @@ namespace trview
         trlevel::tr_model model;
         trlevel::tr_sprite_sequence sprite;
 
+        // if (level.get_model_by_id(entity.TypeID == 0 ? 315 : entity.TypeID, model))
         if (level.get_model_by_id(entity.TypeID, model))
         {
             // Set up world matrix.
