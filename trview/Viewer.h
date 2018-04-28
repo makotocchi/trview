@@ -137,8 +137,8 @@ namespace trview
         std::unique_ptr<ui::render::FontFactory> _font_factory;
         CComPtr<ID3D11BlendState> _blend_state;
 
-        std::unique_ptr<trlevel::ILevel> _current_level;
-        std::unique_ptr<Level> _level;
+        std::vector<std::unique_ptr<trlevel::ILevel>> _current_level;
+        std::vector<std::unique_ptr<Level>> _level;
 
         Window _window;
 
@@ -187,6 +187,9 @@ namespace trview
         // Picking
         ui::Label*        _picking;
         Level::PickResult _current_pick;
+
+        std::unique_ptr<TransparencyBuffer> _transparency;
+        bool _regenerate_transparency{ true };
     };
 }
 

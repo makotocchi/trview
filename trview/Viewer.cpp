@@ -102,16 +102,13 @@ namespace trview
         _neighbours = std::make_unique<Neighbours>(*tool_window.get(), *_texture_storage.get());
         _neighbours->on_depth_changed += [&](int32_t value)
         {
-            if (_level)
-            {
-                _level->set_neighbour_depth(value);
-            }
+            for (auto& l : _level) { l->set_neighbour_depth(value); }
         };
         _neighbours->on_enabled_changed += [&](bool enabled)
         {
-            if (_level)
+            for (auto& l : _level) 
             {
-                _level->set_highlight_mode(enabled ? Level::RoomHighlightMode::Neighbours : Level::RoomHighlightMode::None);
+                l->set_highlight_mode(enabled ? Level::RoomHighlightMode::Neighbours : Level::RoomHighlightMode::None);
                 _room_navigator->set_highlight(false);
             }
         };
@@ -274,9 +271,9 @@ namespace trview
                 }
                 case 'P':
                 {
-                    if (_level)
+                    for (auto& l : _level)
                     {
-                        set_alternate_mode(!_level->alternate_mode());
+                        set_alternate_mode(!l->alternate_mode());
                     }
                     break;
                 }
@@ -370,9 +367,9 @@ namespace trview
                 camera.set_rotation_yaw(yaw);
                 camera.set_rotation_pitch(pitch);
 
-                if (_level)
+                for (auto& l : _level)
                 {
-                    _level->on_camera_moved();
+                    l->on_camera_moved();
                 }
             }
 
@@ -382,9 +379,9 @@ namespace trview
         _mouse.mouse_wheel += [&](int16_t scroll)
         {
             _camera.set_zoom(_camera.zoom() + scroll / -100.0f);
-            if (_level)
+            for(auto& l : _level)
             {
-                _level->on_camera_moved();
+                l->on_camera_moved();
             }
         };
 
@@ -468,9 +465,9 @@ namespace trview
                 const float Speed = std::max(0.01f, _camera_movement_speed) * _CAMERA_MOVEMENT_SPEED_MULTIPLIER;
                 _free_camera.move(movement * _timer.elapsed() * Speed);
 
-                if (_level)
+                for (auto& l : _level)
                 {
-                    _level->on_camera_moved();
+                    l->on_camera_moved();
                 }
             }
         }
@@ -482,14 +479,17 @@ namespace trview
         on_recent_files_changed(_settings.recent_files);
         save_user_settings(_settings);
 
-        _current_level = trlevel::load_level(filename);
-        _level = std::make_unique<Level>(_device, *_shader_storage.get(), _current_level.get());
-        _level->on_room_selected += [&](uint16_t room) { select_room(room); };
-        _level->on_alternate_mode_selected += [&](bool enabled) { set_alternate_mode(enabled); };
+        auto cl = trlevel::load_level(filename);
+        auto l = std::make_unique<Level>(_device, *_shader_storage.get(), cl.get());
+        l->on_room_selected += [&](uint16_t room) { select_room(room); };
+        l->on_alternate_mode_selected += [&](bool enabled) { set_alternate_mode(enabled); };
 
         // Set up the views.
-        auto rooms = _level->room_info();
-        _texture_window->set_textures(_level->level_textures());
+        auto rooms = l->room_info();
+        _texture_window->set_textures(l->level_textures());
+
+        _level.push_back(std::move(l));
+
         _camera.reset();
 
         // Reset UI buttons
@@ -504,7 +504,9 @@ namespace trview
         auto last_index = std::min(filename.find_last_of('\\'), filename.find_last_of('/'));
         auto name = last_index == filename.npos ? filename : filename.substr(std::min(last_index + 1, filename.size()));
         _level_info->set_level(name);
-        _level_info->set_level_version(_current_level->get_version());
+        _level_info->set_level_version(cl->get_version());
+
+        _current_level.push_back(std::move(cl));
     }
 
     void Viewer::on_char(uint16_t character)
@@ -563,7 +565,7 @@ namespace trview
 
     void Viewer::pick()
     {
-        if (!_level || window_is_minimised(_window) || over_ui() || over_map() || cursor_outside_window(_window))
+        if (_level.empty() || window_is_minimised(_window) || over_ui() || over_map() || cursor_outside_window(_window))
         {
             _picking->set_visible(false);
             return;
@@ -583,7 +585,7 @@ namespace trview
         Vector3 direction = XMVector3Unproject(Vector3(mouse_pos.x, mouse_pos.y, 1), 0, 0, static_cast<float>(_window.width()), static_cast<float>(_window.height()), 0, 1.0f, projection, view, world);
         direction.Normalize();
 
-        auto result = _level->pick(position, direction);
+        auto result = _level[0]->pick(position, direction);
 
         _picking->set_visible(result.hit);
         if (result.hit)
@@ -598,10 +600,10 @@ namespace trview
     void Viewer::render_scene()
     {
         _context->OMSetDepthStencilState(_depth_stencil_state, 1);
-        if (_level)
+        if (!_level.empty())
         {
             // Update the view matrix based on the room selected in the room window.
-            auto room = _current_level->get_room(_level->selected_room());
+            auto room = _current_level[0]->get_room(_level[0]->selected_room());
 
             DirectX::SimpleMath::Vector3 target_position(
                 (room.info.x / 1024.f) + room.num_x_sectors / 2.f,
@@ -609,7 +611,10 @@ namespace trview
                 (room.info.z / 1024.f) + room.num_z_sectors / 2.f);
 
             _camera.set_target(target_position);
-            _level->render(_context, current_camera());
+            for (auto& l : _level)
+            {
+                l->render(_context, current_camera());
+            }
         }
     }
 
@@ -682,17 +687,17 @@ namespace trview
 
     void Viewer::toggle_highlight()
     {
-        if (_level)
+        if (!_level.empty())
         {
-            if (_level->highlight_mode() == Level::RoomHighlightMode::Highlight)
+            if (_level[0]->highlight_mode() == Level::RoomHighlightMode::Highlight)
             {
-                _level->set_highlight_mode(Level::RoomHighlightMode::None);
+                _level[0]->set_highlight_mode(Level::RoomHighlightMode::None);
                 _room_navigator->set_highlight(false);
                 _neighbours->set_enabled(false);
             }
             else
             {
-                _level->set_highlight_mode(Level::RoomHighlightMode::Highlight);
+                _level[0]->set_highlight_mode(Level::RoomHighlightMode::Highlight);
                 _room_navigator->set_highlight(true);
                 _neighbours->set_enabled(false);
             }
@@ -701,14 +706,14 @@ namespace trview
 
     void Viewer::select_room(uint32_t room)
     {
-        if (_current_level && room < _current_level->num_rooms())
+        if (!_current_level.empty() && room < _current_level[0]->num_rooms())
         {
-            _level->set_selected_room(static_cast<uint16_t>(room));
+            _level[0]->set_selected_room(static_cast<uint16_t>(room));
 
             _room_navigator->set_selected_room(room);
-            _room_navigator->set_room_info(_level->room_info(room));
+            _room_navigator->set_room_info(_level[0]->room_info(room));
 
-            _map_renderer->load(*_current_level, _current_level->get_room(static_cast<uint16_t>(room)));
+            _map_renderer->load(*_current_level[0], _current_level[0]->get_room(static_cast<uint16_t>(room)));
 
             set_camera_mode(CameraMode::Orbit);
         }
@@ -716,9 +721,9 @@ namespace trview
 
     void Viewer::set_alternate_mode(bool enabled)
     {
-        if (_level)
+        if (!_level.empty())
         {
-            _level->set_alternate_mode(enabled);
+            _level[0]->set_alternate_mode(enabled);
             _room_navigator->set_flip(enabled);
         }
     }
