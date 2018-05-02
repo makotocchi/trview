@@ -32,6 +32,7 @@
 #include <trview.ui.render/MapRenderer.h>
 
 #include "CameraInput.h"
+#include "ViewerMode.h"
 
 namespace trview
 {
@@ -129,6 +130,8 @@ namespace trview
         // Set up keyboard and mouse input for the camera.
         void setup_camera_input();
 
+        void toggle_routing_mode();
+
         CComPtr<IDXGISwapChain>          _swap_chain;
         CComPtr<ID3D11Device>            _device;
         CComPtr<ID3D11DeviceContext>     _context;
@@ -184,6 +187,8 @@ namespace trview
         // Picking
         ui::Label*        _picking;
         Level::PickResult _current_pick;
+
+        ViewerMode _viewer_mode { ViewerMode::Normal };
     };
 }
 

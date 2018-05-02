@@ -303,6 +303,9 @@ namespace trview
                     }
                     break;
                 }
+                case VK_SPACE:
+                    toggle_routing_mode();
+                    break;
                 case VK_PRIOR:
                     cycle_back();
                     break;
@@ -735,5 +738,10 @@ namespace trview
         };
 
         _camera_input.on_mode_change += [&](CameraMode mode) { set_camera_mode(mode); };
+    }
+
+    void Viewer::toggle_routing_mode()
+    {
+        _viewer_mode = _viewer_mode == ViewerMode::Normal ? ViewerMode::Routing : ViewerMode::Normal;
     }
 }

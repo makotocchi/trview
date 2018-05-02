@@ -190,6 +190,7 @@
     <ClInclude Include="trview.h" />
     <ClInclude Include="UserSettings.h" />
     <ClInclude Include="Viewer.h" />
+    <ClInclude Include="ViewerMode.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
