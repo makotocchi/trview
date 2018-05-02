@@ -772,32 +772,15 @@ namespace trview
             _shader_storage->get("level_vertex_shader")->apply(_context);
             _shader_storage->get("level_pixel_shader")->apply(_context);
 
-            // Render the waypoint mesh at the appropriate position.
-            D3D11_MAPPED_SUBRESOURCE mapped_resource;
-            memset(&mapped_resource, 0, sizeof(mapped_resource));
-
-            struct Data
+            for (const auto& pos : _waypoints)
             {
-                Matrix matrix;
-                Color colour;
-            };
+                render_waypoint(pos, Color(0xffff0000));
+            }
 
-            auto world_view_projection = Matrix::CreateTranslation(_current_pick.position) * current_camera().view_projection();
-            Data data{ world_view_projection, Color(0xffff0000) };
-
-            _context->Map(_waypoint_matrix_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped_resource);
-            memcpy(mapped_resource.pData, &data, sizeof(data));
-            _context->Unmap(_waypoint_matrix_buffer, 0);
-
-            UINT stride = sizeof(MeshVertex);
-            UINT offset = 0;
-            _context->IASetVertexBuffers(0, 1, &_waypoint_vertex_buffer.p, &stride, &offset);
-            _context->VSSetConstantBuffers(0, 1, &_waypoint_matrix_buffer.p);
-
-            auto texture = _texture_storage->coloured(0xffffffff);
-            _context->PSSetShaderResources(0, 1, &texture.view.p);
-            _context->IASetIndexBuffer(_waypoint_index_buffer, DXGI_FORMAT_R32_UINT, 0);
-            _context->DrawIndexed(_waypoint_index_count, 0, 0);
+            if (_current_pick.hit)
+            {
+                render_waypoint(_current_pick.position, Color(0xff00ff00));
+            }
         }
     }
 
@@ -878,5 +861,35 @@ namespace trview
         _device->CreateBuffer(&matrix_desc, nullptr, &_waypoint_matrix_buffer);
 
         _waypoint_index_count = indices.size();
+    }
+
+    void Viewer::render_waypoint(const DirectX::SimpleMath::Vector3& position, const DirectX::SimpleMath::Color& waypoint_colour)
+    {
+        // Render the waypoint mesh at the appropriate position.
+        D3D11_MAPPED_SUBRESOURCE mapped_resource;
+        memset(&mapped_resource, 0, sizeof(mapped_resource));
+
+        struct Data
+        {
+            Matrix matrix;
+            Color colour;
+        };
+
+        auto world_view_projection = Matrix::CreateTranslation(position) * current_camera().view_projection();
+        Data data{ world_view_projection, waypoint_colour };
+
+        _context->Map(_waypoint_matrix_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped_resource);
+        memcpy(mapped_resource.pData, &data, sizeof(data));
+        _context->Unmap(_waypoint_matrix_buffer, 0);
+
+        UINT stride = sizeof(MeshVertex);
+        UINT offset = 0;
+        _context->IASetVertexBuffers(0, 1, &_waypoint_vertex_buffer.p, &stride, &offset);
+        _context->VSSetConstantBuffers(0, 1, &_waypoint_matrix_buffer.p);
+
+        auto texture = _texture_storage->coloured(0xffffffff);
+        _context->PSSetShaderResources(0, 1, &texture.view.p);
+        _context->IASetIndexBuffer(_waypoint_index_buffer, DXGI_FORMAT_R32_UINT, 0);
+        _context->DrawIndexed(_waypoint_index_count, 0, 0);
     }
 }
