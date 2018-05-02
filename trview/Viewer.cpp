@@ -482,7 +482,7 @@ namespace trview
             }
             _current_pick = result;
         }
-        else
+        else if (_viewer_mode == ViewerMode::Routing)
         {
             _picking->set_visible(false);
         }
