@@ -764,23 +764,21 @@ namespace trview
     {
         // The established route is always rendered, whether the user is in routing mode or not.
         // However the virtual new route point is not rendered unless in routing mode.
-        if (_viewer_mode == ViewerMode::Routing)
+
+        // Generate the waypoint mesh if it hasn't already been created.
+        create_waypoint_mesh();
+
+        _shader_storage->get("level_vertex_shader")->apply(_context);
+        _shader_storage->get("level_pixel_shader")->apply(_context);
+
+        for (const auto& pos : _waypoints)
         {
-            // Generate the waypoint mesh if it hasn't already been created.
-            create_waypoint_mesh();
+            render_waypoint(pos, Color(0xffff0000));
+        }
 
-            _shader_storage->get("level_vertex_shader")->apply(_context);
-            _shader_storage->get("level_pixel_shader")->apply(_context);
-
-            for (const auto& pos : _waypoints)
-            {
-                render_waypoint(pos, Color(0xffff0000));
-            }
-
-            if (_current_pick.hit)
-            {
-                render_waypoint(_current_pick.position, Color(0xff00ff00));
-            }
+        if (_viewer_mode == ViewerMode::Routing && _current_pick.hit)
+        {
+            render_waypoint(_current_pick.position, Color(0xff00ff00));
         }
     }
 
@@ -818,8 +816,8 @@ namespace trview
             0, 4, 5,
             7, 3, 1,  // +x 
             1, 5, 7,
-            3, 2, 6,  // +z 
-            6, 7, 3,
+            6, 2, 3,  // +z 
+            3, 7, 6,
             4, 0, 2,  // -x
             2, 6, 4,
             7, 5, 4,  // +y
