@@ -506,6 +506,7 @@ namespace trview
                 _camera.set_target(target_position);
             }
             _level->render(_context, current_camera());
+            render_routing();
         }
     }
 
@@ -750,5 +751,15 @@ namespace trview
     void Viewer::toggle_routing_mode()
     {
         _viewer_mode = _viewer_mode == ViewerMode::Normal ? ViewerMode::Routing : ViewerMode::Normal;
+    }
+
+    void Viewer::render_routing()
+    {
+        // The established route is always rendered, whether the user is in routing mode or not.
+        // However the virtual new route point is not rendered unless in routing mode.
+        if (_viewer_mode == ViewerMode::Routing)
+        {
+            // Render the waypoint mesh at the appropriate position.
+        }
     }
 }

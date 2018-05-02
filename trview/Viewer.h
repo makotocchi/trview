@@ -130,7 +130,9 @@ namespace trview
         // Set up keyboard and mouse input for the camera.
         void setup_camera_input();
 
+        // Routing
         void toggle_routing_mode();
+        void render_routing();
 
         CComPtr<IDXGISwapChain>          _swap_chain;
         CComPtr<ID3D11Device>            _device;
