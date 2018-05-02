@@ -249,10 +249,17 @@ namespace trview
         {
             if (button == Mouse::Button::Left)
             {
-                if (!over_ui() && !over_map() && _picking->visible() && _current_pick.hit)
+                if (!over_ui() && !over_map())
                 {
-                    select_room(_current_pick.room);
-                    set_camera_mode(CameraMode::Orbit);
+                    if (_picking->visible() && _current_pick.hit)
+                    {
+                        select_room(_current_pick.room);
+                        set_camera_mode(CameraMode::Orbit);
+                    }
+                    else if (_viewer_mode == ViewerMode::Routing && _current_pick.hit)
+                    {
+                        _waypoints.push_back(_current_pick.position);
+                    }
                 }
                 else if (over_map())
                 {

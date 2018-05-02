@@ -197,6 +197,7 @@ namespace trview
         CComPtr<ID3D11Buffer> _waypoint_index_buffer;
         CComPtr<ID3D11Buffer> _waypoint_matrix_buffer;
         uint32_t              _waypoint_index_count;
+        std::vector<DirectX::SimpleMath::Vector3> _waypoints;
     };
 }
 
