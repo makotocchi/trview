@@ -471,14 +471,21 @@ namespace trview
 
         auto result = _level->pick(position, direction);
 
-        _picking->set_visible(result.hit);
-        if (result.hit)
+        if (_viewer_mode == ViewerMode::Normal)
         {
-            Vector3 screen_pos = XMVector3Project(result.position, 0, 0, static_cast<float>(_window.width()), static_cast<float>(_window.height()), 0, 1.0f, projection, view, XMMatrixIdentity());
-            _picking->set_position(ui::Point(screen_pos.x - _picking->size().width, screen_pos.y - _picking->size().height));
-            _picking->set_text(std::to_wstring(result.room));
+            _picking->set_visible(result.hit);
+            if (result.hit)
+            {
+                Vector3 screen_pos = XMVector3Project(result.position, 0, 0, static_cast<float>(_window.width()), static_cast<float>(_window.height()), 0, 1.0f, projection, view, XMMatrixIdentity());
+                _picking->set_position(ui::Point(screen_pos.x - _picking->size().width, screen_pos.y - _picking->size().height));
+                _picking->set_text(std::to_wstring(result.room));
+            }
+            _current_pick = result;
         }
-        _current_pick = result;
+        else
+        {
+            _picking->set_visible(false);
+        }
     }
 
     void Viewer::render_scene()
