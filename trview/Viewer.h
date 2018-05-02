@@ -133,6 +133,7 @@ namespace trview
         // Routing
         void toggle_routing_mode();
         void render_routing();
+        void create_waypoint_mesh();
 
         CComPtr<IDXGISwapChain>          _swap_chain;
         CComPtr<ID3D11Device>            _device;
@@ -190,7 +191,9 @@ namespace trview
         ui::Label*        _picking;
         Level::PickResult _current_pick;
 
+        // Routing implementation.
         ViewerMode _viewer_mode { ViewerMode::Normal };
+        CComPtr<ID3D11Buffer> _waypoint_vertex_buffer;
     };
 }
 

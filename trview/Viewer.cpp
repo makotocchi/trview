@@ -759,7 +759,50 @@ namespace trview
         // However the virtual new route point is not rendered unless in routing mode.
         if (_viewer_mode == ViewerMode::Routing)
         {
+            // Generate the waypoint mesh if it hasn't already been created.
+            create_waypoint_mesh();
+
             // Render the waypoint mesh at the appropriate position.
+            
         }
+    }
+
+    void Viewer::create_waypoint_mesh()
+    {
+        if (_waypoint_vertex_buffer)
+        {
+            return;
+        }
+
+        using namespace DirectX::SimpleMath;
+        const float W = 0.1f;
+        const float D = 0.1f;
+        const float H = 0.5f;
+        const Vector2 UV{ 0,0 };
+        const Color C{ 1,1,1,1 };
+
+        std::vector<MeshVertex> vertices
+        {
+            { { -W, -D, 0 }, UV, C },
+            { { W, -D, 0 }, UV, C },
+            { { -W, D, 0 }, UV, C },
+            { { W, D, 0 }, UV, C },
+            { { -W, -D, H }, UV, C },
+            { { W, -D, H }, UV, C },
+            { { -W, D, H }, UV, C },
+            { { W, D, H }, UV, C },
+        };
+
+        D3D11_BUFFER_DESC vertex_desc;
+        memset(&vertex_desc, 0, sizeof(vertex_desc));
+        vertex_desc.Usage = D3D11_USAGE_DEFAULT;
+        vertex_desc.ByteWidth = sizeof(MeshVertex) * static_cast<uint32_t>(vertices.size());
+        vertex_desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+        D3D11_SUBRESOURCE_DATA vertex_data;
+        memset(&vertex_data, 0, sizeof(vertex_data));
+        vertex_data.pSysMem = &vertices[0];
+
+        _device->CreateBuffer(&vertex_desc, &vertex_data, &_waypoint_vertex_buffer);
     }
 }
