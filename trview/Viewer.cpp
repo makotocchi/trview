@@ -470,6 +470,7 @@ namespace trview
         direction.Normalize();
 
         auto result = _level->pick(position, direction);
+        _current_pick = result;
 
         if (_viewer_mode == ViewerMode::Normal)
         {
@@ -480,7 +481,6 @@ namespace trview
                 _picking->set_position(ui::Point(screen_pos.x - _picking->size().width, screen_pos.y - _picking->size().height));
                 _picking->set_text(std::to_wstring(result.room));
             }
-            _current_pick = result;
         }
         else if (_viewer_mode == ViewerMode::Routing)
         {
@@ -762,8 +762,35 @@ namespace trview
             // Generate the waypoint mesh if it hasn't already been created.
             create_waypoint_mesh();
 
+            _shader_storage->get("level_vertex_shader")->apply(_context);
+            _shader_storage->get("level_pixel_shader")->apply(_context);
+
             // Render the waypoint mesh at the appropriate position.
-            
+            D3D11_MAPPED_SUBRESOURCE mapped_resource;
+            memset(&mapped_resource, 0, sizeof(mapped_resource));
+
+            struct Data
+            {
+                Matrix matrix;
+                Color colour;
+            };
+
+            auto world_view_projection = Matrix::CreateTranslation(_current_pick.position) * current_camera().view_projection();
+            Data data{ world_view_projection, Color(0xffff0000) };
+
+            _context->Map(_waypoint_matrix_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped_resource);
+            memcpy(mapped_resource.pData, &data, sizeof(data));
+            _context->Unmap(_waypoint_matrix_buffer, 0);
+
+            UINT stride = sizeof(MeshVertex);
+            UINT offset = 0;
+            _context->IASetVertexBuffers(0, 1, &_waypoint_vertex_buffer.p, &stride, &offset);
+            _context->VSSetConstantBuffers(0, 1, &_waypoint_matrix_buffer.p);
+
+            auto texture = _texture_storage->coloured(0xffffffff);
+            _context->PSSetShaderResources(0, 1, &texture.view.p);
+            _context->IASetIndexBuffer(_waypoint_index_buffer, DXGI_FORMAT_R32_UINT, 0);
+            _context->DrawIndexed(_waypoint_index_count, 0, 0);
         }
     }
 
@@ -775,22 +802,38 @@ namespace trview
         }
 
         using namespace DirectX::SimpleMath;
-        const float W = 0.1f;
-        const float D = 0.1f;
+        const float W = 0.025f;
+        const float D = 0.025f;
         const float H = 0.5f;
         const Vector2 UV{ 0,0 };
         const Color C{ 1,1,1,1 };
 
         std::vector<MeshVertex> vertices
         {
-            { { -W, -D, 0 }, UV, C },
-            { { W, -D, 0 }, UV, C },
-            { { -W, D, 0 }, UV, C },
-            { { W, D, 0 }, UV, C },
-            { { -W, -D, H }, UV, C },
-            { { W, -D, H }, UV, C },
-            { { -W, D, H }, UV, C },
-            { { W, D, H }, UV, C },
+            { { -W, 0, -D }, UV, C },
+            { { W, 0, -D }, UV, C },
+            { { -W, 0, D }, UV, C },
+            { { W, 0, D }, UV, C },
+            { { -W, H, -D }, UV, C },
+            { { W, H, -D }, UV, C },
+            { { -W, H, D }, UV, C },
+            { { W, H, D }, UV, C },
+        };
+
+        std::vector<uint32_t> indices
+        {
+            0, 1, 2,  // -y
+            1, 3, 2,
+            5, 1, 0,  // -z
+            0, 4, 5,
+            7, 3, 1,  // +x 
+            1, 5, 7,
+            3, 2, 6,  // +z 
+            6, 7, 3,
+            4, 0, 2,  // -x
+            2, 6, 4,
+            7, 5, 4,  // +y
+            4, 6, 7,
         };
 
         D3D11_BUFFER_DESC vertex_desc;
@@ -804,5 +847,29 @@ namespace trview
         vertex_data.pSysMem = &vertices[0];
 
         _device->CreateBuffer(&vertex_desc, &vertex_data, &_waypoint_vertex_buffer);
+
+        D3D11_BUFFER_DESC index_desc;
+        memset(&index_desc, 0, sizeof(index_desc));
+        index_desc.Usage = D3D11_USAGE_DEFAULT;
+        index_desc.ByteWidth = sizeof(uint32_t) * static_cast<uint32_t>(indices.size());
+        index_desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+        D3D11_SUBRESOURCE_DATA index_data;
+        memset(&index_data, 0, sizeof(index_data));
+        index_data.pSysMem = &indices[0];
+
+        _device->CreateBuffer(&index_desc, &index_data, &_waypoint_index_buffer);
+
+        D3D11_BUFFER_DESC matrix_desc;
+        memset(&matrix_desc, 0, sizeof(matrix_desc));
+
+        matrix_desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+        matrix_desc.ByteWidth = sizeof(Matrix) + sizeof(Color);
+        matrix_desc.Usage = D3D11_USAGE_DYNAMIC;
+        matrix_desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+        _device->CreateBuffer(&matrix_desc, nullptr, &_waypoint_matrix_buffer);
+
+        _waypoint_index_count = indices.size();
     }
 }
