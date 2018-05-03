@@ -19,10 +19,17 @@ namespace trview
         public:
             explicit RouteRenderer(const CComPtr<ID3D11Device>& device, const Texture& waypoint_texture);
 
+            // Render an entire route.
             void render(
                 const CComPtr<ID3D11DeviceContext>& context, 
                 const DirectX::SimpleMath::Matrix& view_projection,
                 const Route& route);
+
+            // Render a single waypoint (useful for showing the next waypoint).
+            void render(
+                const CComPtr<ID3D11DeviceContext>& context,
+                const DirectX::SimpleMath::Matrix& view_projection,
+                const Waypoint& waypoint);
         private:
             void create_waypoint_mesh(const CComPtr<ID3D11Device>& device);
             void render_waypoint(const CComPtr<ID3D11DeviceContext>& context, const DirectX::SimpleMath::Matrix& view_projection, const Waypoint& waypoint);

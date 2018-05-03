@@ -86,7 +86,7 @@ namespace trview
 
             device->CreateBuffer(&matrix_desc, nullptr, &_waypoint_matrix_buffer);
 
-            _waypoint_index_count = indices.size();
+            _waypoint_index_count = static_cast<uint32_t>(indices.size());
         }
 
         void RouteRenderer::render(const CComPtr<ID3D11DeviceContext>& context, const DirectX::SimpleMath::Matrix& view_projection, const Route& route)
@@ -95,6 +95,11 @@ namespace trview
             {
                 render_waypoint(context, view_projection, waypoint);
             }
+        }
+
+        void RouteRenderer::render(const CComPtr<ID3D11DeviceContext>& context, const DirectX::SimpleMath::Matrix& view_projection, const Waypoint& waypoint)
+        {
+            render_waypoint(context, view_projection, waypoint);
         }
 
         void RouteRenderer::render_waypoint(const CComPtr<ID3D11DeviceContext>& context, const DirectX::SimpleMath::Matrix& view_projection, const Waypoint& waypoint)

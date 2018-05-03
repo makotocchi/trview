@@ -41,7 +41,7 @@ namespace trview
         _shader_storage = std::make_unique<graphics::ShaderStorage>();
         load_default_shaders(_device, *_shader_storage.get());
 
-        _route_renderer = std::make_unique<route::RouteRenderer>(_device, _texture_storage->coloured(0xffff0000));
+        _route_renderer = std::make_unique<route::RouteRenderer>(_device, _texture_storage->coloured(0xffffffff));
 
         generate_ui();
     }
@@ -771,11 +771,12 @@ namespace trview
         _shader_storage->get("level_vertex_shader")->apply(_context);
         _shader_storage->get("level_pixel_shader")->apply(_context);
 
-        _route_renderer->render(_context, current_camera().view_projection(), _route);
-        
+        const auto view_projection = current_camera().view_projection();
+
+        _route_renderer->render(_context, view_projection, _route);
         if (_viewer_mode == ViewerMode::Routing && _current_pick.hit)
         {
-            // render_waypoint(_current_pick.position, Color(0xff00ff00));
+            _route_renderer->render(_context, view_projection, route::Waypoint(_current_pick.position, Color(0, 1, 0)));
         }
     }
 }
