@@ -42,6 +42,11 @@ namespace trview
         class Label;
     }
 
+    namespace route
+    {
+        class RouteRenderer;
+    }
+
     class RoomNavigator;
     class CameraControls;
     class Neighbours;
@@ -133,7 +138,6 @@ namespace trview
         // Routing
         void toggle_routing_mode();
         void render_routing();
-        void create_waypoint_mesh();
         void render_waypoint(const DirectX::SimpleMath::Vector3& position, const DirectX::SimpleMath::Color& waypoint_colour);
 
         CComPtr<IDXGISwapChain>          _swap_chain;
@@ -199,6 +203,7 @@ namespace trview
         CComPtr<ID3D11Buffer> _waypoint_matrix_buffer;
         uint32_t              _waypoint_index_count;
         std::vector<DirectX::SimpleMath::Vector3> _waypoints;
+        std::unique_ptr<route::RouteRenderer> _route_renderer;
     };
 }
 

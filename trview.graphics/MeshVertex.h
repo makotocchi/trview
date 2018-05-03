@@ -11,3 +11,4 @@ namespace trview
         DirectX::SimpleMath::Color colour;
     };
 }
+

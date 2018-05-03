@@ -4,7 +4,7 @@
 #include <SimpleMath.h>
 #include <atlbase.h>
 #include <d3d11.h>
-#include "MeshVertex.h"
+#include <trview.graphics/MeshVertex.h>
 #include "TransparentTriangle.h"
 
 namespace trview

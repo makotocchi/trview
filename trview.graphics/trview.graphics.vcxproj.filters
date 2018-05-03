@@ -16,6 +16,9 @@
     <ClInclude Include="VertexShader.h">
       <Filter>Shaders</Filter>
     </ClInclude>
+    <ClInclude Include="MeshVertex.h">
+      <Filter>Vertex</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IShaderStorage.cpp">
@@ -37,6 +40,9 @@
   <ItemGroup>
     <Filter Include="Shaders">
       <UniqueIdentifier>{e2aa40d1-8c31-4aa1-9325-2c4a9193e98f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Vertex">
+      <UniqueIdentifier>{4eb4bb6a-5789-4834-9f76-ca0aa2b200eb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "Room.h"
-#include "MeshVertex.h"
+#include <trview.graphics/MeshVertex.h>
 #include "Entity.h"
 
 #include "ILevelTextureStorage.h"

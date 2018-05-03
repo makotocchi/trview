@@ -3,7 +3,6 @@
 
 #include "ICamera.h"
 #include "ILevelTextureStorage.h"
-#include "MeshVertex.h"
 
 #include <algorithm>
 

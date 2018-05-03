@@ -6,7 +6,7 @@
 
 #include <trlevel/trtypes.h>
 
-#include "MeshVertex.h"
+#include <trview.graphics/MeshVertex.h>
 #include "TransparencyBuffer.h"
 
 namespace trview

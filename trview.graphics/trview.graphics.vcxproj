@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="IShader.h" />
     <ClInclude Include="IShaderStorage.h" />
+    <ClInclude Include="MeshVertex.h" />
     <ClInclude Include="PixelShader.h" />
     <ClInclude Include="ShaderStorage.h" />
     <ClInclude Include="VertexShader.h" />

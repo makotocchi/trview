@@ -3,9 +3,11 @@
   <ItemGroup>
     <ClInclude Include="Route.h" />
     <ClInclude Include="Waypoint.h" />
+    <ClInclude Include="RouteRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Route.cpp" />
     <ClCompile Include="Waypoint.cpp" />
+    <ClCompile Include="RouteRenderer.cpp" />
   </ItemGroup>
 </Project>

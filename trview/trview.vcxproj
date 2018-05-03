@@ -171,7 +171,6 @@
     <ClInclude Include="MapTypes.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="MeshStorage.h" />
-    <ClInclude Include="MeshVertex.h" />
     <ClInclude Include="Neighbours.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Room.h" />
@@ -268,6 +267,9 @@
     </ProjectReference>
     <ProjectReference Include="..\trview.input\trview.input.vcxproj">
       <Project>{0b28c3cd-d28a-4923-9577-50eb1ee29212}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\trview.route\trview.route.vcxproj">
+      <Project>{b99dd1cb-efbf-4d8c-bc27-c106861e0145}</Project>
     </ProjectReference>
     <ProjectReference Include="..\trview.ui.render\trview.ui.render.vcxproj">
       <Project>{0c5a9791-6cf1-42e9-9776-ac47eeff8ec8}</Project>

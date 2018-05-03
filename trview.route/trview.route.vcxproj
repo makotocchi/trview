@@ -20,10 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Route.h" />
+    <ClInclude Include="RouteRenderer.h" />
     <ClInclude Include="Waypoint.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Route.cpp" />
+    <ClCompile Include="RouteRenderer.cpp" />
     <ClCompile Include="Waypoint.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
