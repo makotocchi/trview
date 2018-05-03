@@ -1,5 +1,4 @@
 #include "RouteRenderer.h"
-#include <SimpleMath.h>
 #include <vector>
 
 #include <trview.graphics/MeshVertex.h>
@@ -8,9 +7,10 @@ namespace trview
 {
     namespace route
     {
-        RouteRenderer::RouteRenderer(const CComPtr<ID3D11Device>& device)
+        RouteRenderer::RouteRenderer(const CComPtr<ID3D11Device>& device, const Texture& waypoint_texture)
+            : _waypoint_texture(waypoint_texture)
         {
-
+            create_waypoint_mesh(device);
         }
 
         void RouteRenderer::create_waypoint_mesh(const CComPtr<ID3D11Device>& device)
@@ -85,6 +85,41 @@ namespace trview
             device->CreateBuffer(&matrix_desc, nullptr, &_waypoint_matrix_buffer);
 
             _waypoint_index_count = indices.size();
+        }
+
+        void RouteRenderer::render(const CComPtr<ID3D11DeviceContext>& context, const DirectX::SimpleMath::Matrix& view_projection)
+        {
+
+        }
+
+        void RouteRenderer::render_waypoint(const CComPtr<ID3D11DeviceContext>& context, const DirectX::SimpleMath::Vector3& position, const DirectX::SimpleMath::Color& waypoint_colour, const DirectX::SimpleMath::Matrix& view_projection)
+        {
+            using namespace DirectX::SimpleMath;
+            // Render the waypoint mesh at the appropriate position.
+            D3D11_MAPPED_SUBRESOURCE mapped_resource;
+            memset(&mapped_resource, 0, sizeof(mapped_resource));
+
+            struct Data
+            {
+                Matrix matrix;
+                Color colour;
+            };
+
+            auto world_view_projection = Matrix::CreateTranslation(position) * view_projection;
+            Data data{ world_view_projection, waypoint_colour };
+
+            context->Map(_waypoint_matrix_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped_resource);
+            memcpy(mapped_resource.pData, &data, sizeof(data));
+            context->Unmap(_waypoint_matrix_buffer, 0);
+
+            UINT stride = sizeof(MeshVertex);
+            UINT offset = 0;
+            context->IASetVertexBuffers(0, 1, &_waypoint_vertex_buffer.p, &stride, &offset);
+            context->VSSetConstantBuffers(0, 1, &_waypoint_matrix_buffer.p);
+
+            context->PSSetShaderResources(0, 1, &_waypoint_texture.view.p);
+            context->IASetIndexBuffer(_waypoint_index_buffer, DXGI_FORMAT_R32_UINT, 0);
+            context->DrawIndexed(_waypoint_index_count, 0, 0);
         }
     }
 }

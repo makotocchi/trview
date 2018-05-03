@@ -138,7 +138,6 @@ namespace trview
         // Routing
         void toggle_routing_mode();
         void render_routing();
-        void render_waypoint(const DirectX::SimpleMath::Vector3& position, const DirectX::SimpleMath::Color& waypoint_colour);
 
         CComPtr<IDXGISwapChain>          _swap_chain;
         CComPtr<ID3D11Device>            _device;
