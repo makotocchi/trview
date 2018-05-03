@@ -262,7 +262,7 @@ namespace trview
                     }
                     else if (_viewer_mode == ViewerMode::Routing)
                     {
-                        _waypoints.push_back(_current_pick.position);
+                        _route.add(route::Waypoint(_current_pick.position, Color(0xffff0000)));
                     }
                 }
                 else if (over_map())
@@ -771,11 +771,8 @@ namespace trview
         _shader_storage->get("level_vertex_shader")->apply(_context);
         _shader_storage->get("level_pixel_shader")->apply(_context);
 
-        for (const auto& pos : _waypoints)
-        {
-            // render_waypoint(pos, Color(0xffff0000));
-        }
-
+        _route_renderer->render(_context, current_camera().view_projection(), _route);
+        
         if (_viewer_mode == ViewerMode::Routing && _current_pick.hit)
         {
             // render_waypoint(_current_pick.position, Color(0xff00ff00));

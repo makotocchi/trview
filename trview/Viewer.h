@@ -34,6 +34,8 @@
 #include "CameraInput.h"
 #include "ViewerMode.h"
 
+#include <trview.route/Route.h>
+
 namespace trview
 {
     namespace ui
@@ -197,8 +199,7 @@ namespace trview
 
         // Routing implementation.
         ViewerMode _viewer_mode { ViewerMode::Normal };
-        std::vector<DirectX::SimpleMath::Vector3> _waypoints;
+        route::Route _route;
         std::unique_ptr<route::RouteRenderer> _route_renderer;
     };
 }
-

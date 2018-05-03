@@ -2,6 +2,8 @@
 #include <vector>
 
 #include <trview.graphics/MeshVertex.h>
+#include "Route.h"
+#include "Waypoint.h"
 
 namespace trview
 {
@@ -87,12 +89,15 @@ namespace trview
             _waypoint_index_count = indices.size();
         }
 
-        void RouteRenderer::render(const CComPtr<ID3D11DeviceContext>& context, const DirectX::SimpleMath::Matrix& view_projection)
+        void RouteRenderer::render(const CComPtr<ID3D11DeviceContext>& context, const DirectX::SimpleMath::Matrix& view_projection, const Route& route)
         {
-
+            for (const Waypoint& waypoint : route.waypoints())
+            {
+                render_waypoint(context, view_projection, waypoint);
+            }
         }
 
-        void RouteRenderer::render_waypoint(const CComPtr<ID3D11DeviceContext>& context, const DirectX::SimpleMath::Vector3& position, const DirectX::SimpleMath::Color& waypoint_colour, const DirectX::SimpleMath::Matrix& view_projection)
+        void RouteRenderer::render_waypoint(const CComPtr<ID3D11DeviceContext>& context, const DirectX::SimpleMath::Matrix& view_projection, const Waypoint& waypoint)
         {
             using namespace DirectX::SimpleMath;
             // Render the waypoint mesh at the appropriate position.
@@ -105,8 +110,8 @@ namespace trview
                 Color colour;
             };
 
-            auto world_view_projection = Matrix::CreateTranslation(position) * view_projection;
-            Data data{ world_view_projection, waypoint_colour };
+            auto world_view_projection = Matrix::CreateTranslation(waypoint.position()) * view_projection;
+            Data data{ world_view_projection, waypoint.colour() };
 
             context->Map(_waypoint_matrix_buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped_resource);
             memcpy(mapped_resource.pData, &data, sizeof(data));
