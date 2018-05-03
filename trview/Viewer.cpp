@@ -262,7 +262,7 @@ namespace trview
                     }
                     else if (_viewer_mode == ViewerMode::Routing)
                     {
-                        _route.add(route::Waypoint(_current_pick.position, Color(0xffff0000)));
+                        _route.add(route::Waypoint(_current_pick.position, Color(1, 0, 0)));
                     }
                 }
                 else if (over_map())
