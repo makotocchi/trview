@@ -41,7 +41,7 @@ namespace trview
         _shader_storage = std::make_unique<graphics::ShaderStorage>();
         load_default_shaders(_device, *_shader_storage.get());
 
-        _route_renderer = std::make_unique<route::RouteRenderer>(_device, *_shader_storage.get(), _texture_storage->coloured(0xffffffff));
+        _route_renderer = std::make_unique<route::RouteRenderer>(_device, *_shader_storage.get(), _texture_storage->lookup("waypoint"));
 
         generate_ui();
     }
@@ -262,7 +262,7 @@ namespace trview
                     }
                     else if (_viewer_mode == ViewerMode::Routing)
                     {
-                        _route.add(route::Waypoint(_current_pick.position, Color(1, 0, 0)));
+                        _route.add(route::Waypoint(_current_pick.position, Color(1, 1, 1)));
                     }
                 }
                 else if (over_map())

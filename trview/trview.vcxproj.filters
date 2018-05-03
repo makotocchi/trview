@@ -316,6 +316,9 @@
     <Image Include="resources\checkoff.png">
       <Filter>Resources</Filter>
     </Image>
+    <Image Include="resources\trview.png">
+      <Filter>Resources</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="level_pixel_shader.hlsl">

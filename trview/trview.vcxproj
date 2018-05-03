@@ -249,6 +249,7 @@
     </Image>
     <Image Include="resources\tomb4.png" />
     <Image Include="resources\tomb5.png" />
+    <Image Include="resources\trview.png" />
     <Image Include="resources\unknown.png">
       <DeploymentContent>true</DeploymentContent>
     </Image>
