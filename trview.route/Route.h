@@ -4,6 +4,9 @@ namespace trview
 {
     namespace route
     {
+        class Route
+        {
 
+        };
     }
 }

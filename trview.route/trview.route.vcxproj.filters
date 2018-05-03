@@ -2,8 +2,10 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="Route.h" />
+    <ClInclude Include="Waypoint.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Route.cpp" />
+    <ClCompile Include="Waypoint.cpp" />
   </ItemGroup>
 </Project>
