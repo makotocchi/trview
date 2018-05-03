@@ -24,19 +24,19 @@ namespace trview
             const Vector2 UV{ 0,0 };
             const Color C{ 1,1,1,1 };
 
-            std::vector<MeshVertex> vertices
+            const std::vector<MeshVertex> vertices
             {
                 { { -W, 0, -D }, UV, C },
-            { { W, 0, -D }, UV, C },
-            { { -W, 0, D }, UV, C },
-            { { W, 0, D }, UV, C },
-            { { -W, H, -D }, UV, C },
-            { { W, H, -D }, UV, C },
-            { { -W, H, D }, UV, C },
-            { { W, H, D }, UV, C },
+                { { W, 0, -D }, UV, C },
+                { { -W, 0, D }, UV, C },
+                { { W, 0, D }, UV, C },
+                { { -W, H, -D }, UV, C },
+                { { W, H, -D }, UV, C },
+                { { -W, H, D }, UV, C },
+                { { W, H, D }, UV, C },
             };
 
-            std::vector<uint32_t> indices
+            const std::vector<uint32_t> indices
             {
                 0, 1, 2,  // -y
                 1, 3, 2,
