@@ -1,7 +1,9 @@
 #include "RouteRenderer.h"
 #include <vector>
 
+#include <trview.graphics/IShaderStorage.h>
 #include <trview.graphics/MeshVertex.h>
+#include <trview.graphics/IShader.h>
 #include "Route.h"
 #include "Waypoint.h"
 
@@ -9,8 +11,10 @@ namespace trview
 {
     namespace route
     {
-        RouteRenderer::RouteRenderer(const CComPtr<ID3D11Device>& device, const Texture& waypoint_texture)
-            : _waypoint_texture(waypoint_texture)
+        RouteRenderer::RouteRenderer(const CComPtr<ID3D11Device>& device, const graphics::IShaderStorage& shader_storage, const Texture& waypoint_texture)
+            : _waypoint_texture(waypoint_texture),
+            _vertex_shader(shader_storage.get("level_vertex_shader")),
+            _pixel_shader(shader_storage.get("level_pixel_shader"))
         {
             create_waypoint_mesh(device);
         }
@@ -91,6 +95,8 @@ namespace trview
 
         void RouteRenderer::render(const CComPtr<ID3D11DeviceContext>& context, const DirectX::SimpleMath::Matrix& view_projection, const Route& route)
         {
+            _vertex_shader->apply(context);
+            _pixel_shader->apply(context);
             for (const Waypoint& waypoint : route.waypoints())
             {
                 render_waypoint(context, view_projection, waypoint);
@@ -99,6 +105,8 @@ namespace trview
 
         void RouteRenderer::render(const CComPtr<ID3D11DeviceContext>& context, const DirectX::SimpleMath::Matrix& view_projection, const Waypoint& waypoint)
         {
+            _vertex_shader->apply(context);
+            _pixel_shader->apply(context);
             render_waypoint(context, view_projection, waypoint);
         }
 

@@ -41,7 +41,7 @@ namespace trview
         _shader_storage = std::make_unique<graphics::ShaderStorage>();
         load_default_shaders(_device, *_shader_storage.get());
 
-        _route_renderer = std::make_unique<route::RouteRenderer>(_device, _texture_storage->coloured(0xffffffff));
+        _route_renderer = std::make_unique<route::RouteRenderer>(_device, *_shader_storage.get(), _texture_storage->coloured(0xffffffff));
 
         generate_ui();
     }
@@ -768,9 +768,6 @@ namespace trview
     {
         // The established route is always rendered, whether the user is in routing mode or not.
         // However the virtual new route point is not rendered unless in routing mode.
-        _shader_storage->get("level_vertex_shader")->apply(_context);
-        _shader_storage->get("level_pixel_shader")->apply(_context);
-
         const auto view_projection = current_camera().view_projection();
 
         _route_renderer->render(_context, view_projection, _route);
