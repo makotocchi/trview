@@ -15,7 +15,7 @@ namespace trview
     {
         class Sprite;
 
-        /// Used to set and restore the host size of a sprite - useful when using the 
+        /// Used to set and restore the host size of a sprite - useful when using the DirectXTK
         /// sprite to render to a different render target.
         class SpriteSizeStore final
         {
