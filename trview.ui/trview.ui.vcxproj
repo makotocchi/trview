@@ -24,13 +24,16 @@
     <ClInclude Include="Colour.h" />
     <ClInclude Include="Control.h" />
     <ClInclude Include="GroupBox.h" />
+    <ClInclude Include="ILayout.h" />
     <ClInclude Include="Image.h" />
     <ClInclude Include="Label.h" />
     <ClInclude Include="NumericUpDown.h" />
     <ClInclude Include="ParagraphAlignment.h" />
+    <ClInclude Include="ResizeLayout.h" />
     <ClInclude Include="SizeDimension.h" />
     <ClInclude Include="SizeMode.h" />
     <ClInclude Include="Slider.h" />
+    <ClInclude Include="StackLayout.h" />
     <ClInclude Include="StackPanel.h" />
     <ClInclude Include="TextAlignment.h" />
     <ClInclude Include="Checkbox.h" />
@@ -44,7 +47,9 @@
     <ClCompile Include="Image.cpp" />
     <ClCompile Include="Label.cpp" />
     <ClCompile Include="NumericUpDown.cpp" />
+    <ClCompile Include="ResizeLayout.cpp" />
     <ClCompile Include="Slider.cpp" />
+    <ClCompile Include="StackLayout.cpp" />
     <ClCompile Include="StackPanel.cpp" />
     <ClCompile Include="Checkbox.cpp" />
     <ClCompile Include="Window.cpp" />

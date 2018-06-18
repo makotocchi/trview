@@ -49,6 +49,15 @@
     <ClInclude Include="SizeDimension.h">
       <Filter>Controls</Filter>
     </ClInclude>
+    <ClInclude Include="ILayout.h">
+      <Filter>Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="StackLayout.h">
+      <Filter>Layout</Filter>
+    </ClInclude>
+    <ClInclude Include="ResizeLayout.h">
+      <Filter>Layout</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Colour.cpp">
@@ -84,6 +93,12 @@
     <ClCompile Include="Checkbox.cpp">
       <Filter>Controls</Filter>
     </ClCompile>
+    <ClCompile Include="StackLayout.cpp">
+      <Filter>Layout</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizeLayout.cpp">
+      <Filter>Layout</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Types">
@@ -91,6 +106,9 @@
     </Filter>
     <Filter Include="Controls">
       <UniqueIdentifier>{a78c4281-0488-4328-8bf1-060d8cbdd71d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Layout">
+      <UniqueIdentifier>{12bfb0a6-c7a4-4933-983c-d6a8feb37146}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
