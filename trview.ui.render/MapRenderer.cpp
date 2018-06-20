@@ -72,6 +72,7 @@ namespace trview
                 // Draw base square, this is the backdrop for the map 
                 draw(context, Point(), Size(static_cast<float>(_render_target->width()), static_cast<float>(_render_target->height())), Color(0.0f, 0.0f, 0.0f));
 
+                bool any_hovered = false;
                 std::for_each(_tiles.begin(), _tiles.end(), [&](const Tile &tile)
                 {
                     // Firstly get the colour for the tile 
@@ -93,7 +94,11 @@ namespace trview
                     // If the cursor is over the tile, then negate colour 
                     Point first = tile.position, last = Point(tile.size.width, tile.size.height) + tile.position;
                     if (_cursor.is_between(first, last))
+                    {
+                        any_hovered = true;
+                        hover_tile(tile);
                         draw_color.Negate();
+                    }
 
                     // Draw the base tile 
                     draw(context, tile.position, tile.size, draw_color);
@@ -119,6 +124,11 @@ namespace trview
                     if (tile.sector->flags & SectorFlag::RoomAbove)
                         draw(context, tile.position, Size(tile.size.width / 4, tile.size.height / 4), Color(0.0f, 0.0f, 0.0f));
                 });
+
+                if (!any_hovered)
+                {
+                    hover_tile(Tile());
+                }
             }
 
             void MapRenderer::draw(const ComPtr<ID3D11DeviceContext>& context, Point position, Size size, const Color& colour)
@@ -140,7 +150,9 @@ namespace trview
 
                 const auto& sectors = room->sectors(); 
                 std::for_each(sectors.begin(), sectors.end(), [&] (const auto& pair) {
-                    _tiles.emplace_back(std::shared_ptr<Sector>(pair.second), get_position(*pair.second), get_size());
+                    uint32_t x = pair.second->id() / _rows;
+                    uint32_t z = _rows - (pair.second->id() % _rows) - 1;
+                    _tiles.emplace_back(std::shared_ptr<Sector>(pair.second), get_position(*pair.second), get_size(), x, z);
                 });
             }
 
@@ -232,6 +244,22 @@ namespace trview
                 }
 
                 return false;
+            }
+
+            void MapRenderer::hover_tile(const Tile& tile)
+            {
+                if (_hovered_sector != tile.sector)
+                {
+                    _hovered_sector = tile.sector;
+                    if (tile.sector)
+                    {
+                        on_sector_hover(tile.x, tile.z);
+                    }
+                    else
+                    {
+                        on_sector_hover_end();
+                    }
+                }
             }
         }
     }

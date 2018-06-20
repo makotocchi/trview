@@ -36,12 +36,16 @@ namespace trview
                 struct Tile
                 {
                 public:
-                    Tile(const std::shared_ptr<Sector>& p_sector, Point p_position, Size p_size)
-                        : sector(p_sector), position(p_position), size(p_size) {}
+                    Tile() {}
+
+                    Tile(const std::shared_ptr<Sector>& p_sector, Point p_position, Size p_size, uint32_t x, uint32_t z)
+                        : sector(p_sector), position(p_position), size(p_size), x(x), z(z) {}
 
                     std::shared_ptr<Sector> sector; 
                     Point position; 
                     Size size; 
+                    uint32_t x{ 0u };
+                    uint32_t z{ 0u };
                 };
             }
 
@@ -92,6 +96,9 @@ namespace trview
                 /// Event raised when a sector is hovered over. 
                 /// The x and z index of the sector are passed as parameters.
                 Event<uint32_t, uint32_t> on_sector_hover;
+
+                /// Event raised when no sector is being hovered over.
+                Event<> on_sector_hover_end;
             private:
                 /// Returns the sector under the specified position, or nullptr if none.
                 /// @param point The point to test.
@@ -128,6 +135,9 @@ namespace trview
                 /// @returns True if the map needs to be re-drawn.
                 bool needs_redraw();
 
+                /// Hover over a tile.
+                void hover_tile(const Tile& tile);
+
                 Microsoft::WRL::ComPtr<ID3D11Device>               _device;
                 int                                                _window_width, _window_height;
                 graphics::Sprite                                   _sprite; 
@@ -145,6 +155,8 @@ namespace trview
 
                 const float                         _DRAW_MARGIN = 30.0f; 
                 const float                         _DRAW_SCALE = 14.0f; 
+
+                std::shared_ptr<Sector> _hovered_sector;
             };
         }
     }
