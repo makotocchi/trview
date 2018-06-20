@@ -1,5 +1,7 @@
 #include "MapRenderer.h"
 #include <unordered_map>
+#include <algorithm>
+
 #include <trview.graphics/RenderTargetStore.h>
 #include <trview.graphics/ViewportStore.h>
 #include <trview.graphics/SpriteSizeStore.h>
@@ -39,8 +41,7 @@ namespace trview
             {
             }
 
-            void
-            MapRenderer::render(const ComPtr<ID3D11DeviceContext>& context)
+            void MapRenderer::render(const ComPtr<ID3D11DeviceContext>& context)
             {
                 if (!_render_target)
                 {
@@ -66,8 +67,7 @@ namespace trview
                 _sprite.render(context, _render_target->texture(), p.x, p.y, static_cast<float>(_render_target->width()), static_cast<float>(_render_target->height()));
             }
 
-            void
-            MapRenderer::render_internal(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& context)
+            void MapRenderer::render_internal(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& context)
             {
                 // Draw base square, this is the backdrop for the map 
                 draw(context, Point(), Size(static_cast<float>(_render_target->width()), static_cast<float>(_render_target->height())), Color(0.0f, 0.0f, 0.0f));
@@ -121,14 +121,12 @@ namespace trview
                 });
             }
 
-            void 
-            MapRenderer::draw(const ComPtr<ID3D11DeviceContext>& context, Point p, Size s, const Color& c)
+            void MapRenderer::draw(const ComPtr<ID3D11DeviceContext>& context, Point position, Size size, const Color& colour)
             {
-                _sprite.render(context, _texture, p.x, p.y, s.width, s.height, c); 
+                _sprite.render(context, _texture, position.x, position.y, size.width, size.height, colour); 
             }
 
-            void
-            MapRenderer::load(trview::Room *room)
+            void MapRenderer::load(const trview::Room* const room)
             {
                 // Set window position and size 
                 _columns = room->num_x_sectors();
@@ -146,7 +144,7 @@ namespace trview
                 });
             }
 
-            Point MapRenderer::get_position(const Sector& sector)
+            Point MapRenderer::get_position(const Sector& sector) const
             {
                 return Point {
                     /* X */ _DRAW_SCALE * (sector.id() / _rows),
@@ -159,36 +157,33 @@ namespace trview
                 return Size { _DRAW_SCALE - 1, _DRAW_SCALE - 1 };
             }
 
-            std::shared_ptr<Sector> 
-            MapRenderer::sector_at(const Point& p) const
+            std::shared_ptr<Sector> MapRenderer::sector_at(const Point& point) const
             {
                 auto iter = std::find_if(_tiles.begin(), _tiles.end(), [&] (const Tile& tile) {
                     // Get bottom-right point of the tile 
                     Point last = Point(tile.size.width, tile.size.height) + tile.position; 
                     // Check if point is between the origin, and the bottom-right corner 
-                    return p.is_between(tile.position, last); 
+                    return point.is_between(tile.position, last); 
                 });
-                
+
                 if (iter == _tiles.end())
+                {
                     return nullptr;
-                else
-                    return std::shared_ptr<Sector>(iter->sector);
+                }
+                return std::shared_ptr<Sector>(iter->sector);
             }
 
-            std::shared_ptr<Sector> 
-            MapRenderer::sector_at_cursor() const
+            std::shared_ptr<Sector> MapRenderer::sector_at_cursor() const
             {
                 return sector_at(_cursor);
             }
 
-            bool 
-            MapRenderer::cursor_is_over_control() const
+            bool MapRenderer::cursor_is_over_control() const
             {
                 return _render_target && _cursor.is_between(Point(), Point(static_cast<float>(_render_target->width()), static_cast<float>(_render_target->height())));
             }
 
-            void 
-            MapRenderer::set_window_size(int width, int height)
+            void MapRenderer::set_window_size(int width, int height)
             {
                 _window_width = width;
                 _window_height = height;
@@ -196,8 +191,7 @@ namespace trview
                 update_map_position();
             }
 
-            void 
-            MapRenderer::update_map_position()
+            void MapRenderer::update_map_position()
             {
                 // Location of the origin of the control 
                 _first = Point(_window_width - (_DRAW_SCALE * _columns) - _DRAW_MARGIN, _DRAW_MARGIN);
@@ -205,8 +199,7 @@ namespace trview
                 _last = _first + Point(_DRAW_SCALE * _columns, _DRAW_SCALE * _rows);
             }
 
-            void
-            MapRenderer::update_map_render_target()
+            void MapRenderer::update_map_render_target()
             {
                 uint32_t width = static_cast<uint32_t>(_DRAW_SCALE * _columns + 1);
                 uint32_t height = static_cast<uint32_t>(_DRAW_SCALE * _rows + 1);
@@ -219,8 +212,7 @@ namespace trview
                 _force_redraw = true;
             }
 
-            bool 
-            MapRenderer::needs_redraw()
+            bool MapRenderer::needs_redraw()
             {
                 if (_force_redraw)
                 {
