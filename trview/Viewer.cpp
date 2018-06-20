@@ -96,11 +96,24 @@ namespace trview
         _settings_window->set_vsync(_settings.vsync);
         _settings_window->set_go_to_lara(_settings.go_to_lara);
 
+        auto debug_label = std::make_unique<ui::Label>(Point(400, 400), Size(10, 10), ui::Colour(1.0f, 0.0f, 0.0f, 0.0f), L"Text", 12.0f, ui::TextAlignment::Left, ui::ParagraphAlignment::Near, ui::SizeMode::Auto);
+        auto debug_label_ptr = debug_label.get();
+        _control->add_child(std::move(debug_label));
+
         // Create the renderer for the UI based on the controls created.
         _ui_renderer = std::make_unique<ui::render::Renderer>(_device.device(), *_shader_storage.get(), _window.width(), _window.height());
         _ui_renderer->load(_control.get());
 
         _map_renderer = std::make_unique<ui::render::MapRenderer>(_device.device(), *_shader_storage.get(), _window.width(), _window.height());
+        _map_renderer->on_sector_hover += [=] (uint32_t x, uint32_t z)
+        {
+            const auto text = L"X: " + std::to_wstring(x) + L", Z:" + std::to_wstring(z);
+            debug_label_ptr->set_text(text);
+        };
+        _map_renderer->on_sector_hover_end += [=]()
+        {
+            debug_label_ptr->set_text(L"None");
+        };
     }
 
     void Viewer::generate_tool_window()
