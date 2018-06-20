@@ -10,7 +10,6 @@
 
 #include <trview.graphics/Sprite.h>
 #include "trview\Types.h"
-#include "trview\TextureStorage.h"
 #include <trview.graphics/Texture.h>
 #include <trview.common/Point.h>
 #include <trview.common/Size.h>

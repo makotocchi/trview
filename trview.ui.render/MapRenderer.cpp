@@ -34,10 +34,9 @@ namespace trview
                 : _device(device),
                 _window_width(width), 
                 _window_height(height),
-                _sprite(device, shader_storage, width, height)
+                _sprite(device, shader_storage, width, height),
+                _texture(device, 1, 1, 0xffffffff)
             {
-                TextureStorage texture_storage{ device };
-                _texture = texture_storage.coloured(0xFFFFFFFF);
             }
 
             void

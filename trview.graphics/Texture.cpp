@@ -44,7 +44,7 @@ namespace trview
         }
 
         Texture::Texture(const ComPtr<ID3D11Device>& device, uint32_t width, uint32_t height, Bind bind)
-            : Texture(device, width, height, std::vector<uint32_t>(width * height, 0x00000000), bind)
+            : Texture(device, width, height, 0x00000000, bind)
         {
         }
 
@@ -72,6 +72,11 @@ namespace trview
             {
                 device->CreateShaderResourceView(_texture.Get(), nullptr, &_view);
             }
+        }
+
+        Texture::Texture(const Microsoft::WRL::ComPtr<ID3D11Device>& device, uint32_t width, uint32_t height, uint32_t colour, Bind bind)
+            : Texture(device, width, height, std::vector<uint32_t>(width * height, colour), bind)
+        {
         }
 
         bool Texture::has_content() const

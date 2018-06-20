@@ -56,11 +56,21 @@ namespace trview
             /// texture is created and can be used.
             /// @param device The D3D device to use to create this texture.
             /// @param width The width in pixels of the new texture.
-            /// @param height The height in pixels of the new texture.#
+            /// @param height The height in pixels of the new texture.
             /// @param pixels The pixel data to use to initialise the texture. This must contain at least as many elements as width x height.
             /// @param bind An optional parameter to specify the bind mode. By default this is set to Bind::Texture.
             /// @see Bind
             Texture(const Microsoft::WRL::ComPtr<ID3D11Device>& device, uint32_t width, uint32_t height, const std::vector<uint32_t>& pixels, Bind bind = Bind::Texture);
+
+            /// Create a texture of the specified dimensions with all pixels initialised to the provided colour. The optional bind mode will affect
+            /// the way that this texture is created and can be used.
+            /// @param device The D3D device to use to create this texture.
+            /// @param width The width in pixels of the new texture.
+            /// @param height The height in pixels of the new texture.
+            /// @param colour The colour to use to initialise the pixels of the texture.
+            /// @param bind An optional parameter to specify the bind mode. By default this is set to Bind::Texture.
+            /// @see Bind
+            Texture(const Microsoft::WRL::ComPtr<ID3D11Device>& device, uint32_t width, uint32_t height, uint32_t colour, Bind bind = Bind::Texture);
 
             /// Indicates whether this texture has any texture content.
             /// @returns True if the texture has content.
