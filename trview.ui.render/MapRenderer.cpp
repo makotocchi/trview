@@ -1,4 +1,5 @@
 #include "MapRenderer.h"
+#include <unordered_map>
 #include <trview.graphics/RenderTargetStore.h>
 #include <trview.graphics/ViewportStore.h>
 #include <trview.graphics/SpriteSizeStore.h>
@@ -12,6 +13,23 @@ namespace trview
     {
         namespace render
         {
+            namespace
+            {
+                const std::unordered_map<SectorFlag, Color> default_colours{
+                    { Portal,           { 0.0f, 0.0f, 0.0f } },
+                    { Wall,             { 0.4f, 0.4f, 0.4f } },
+                    { Trigger,          { 1.0f, 0.3f, 0.7f } },
+                    { Death,            { 0.9f, 0.1f, 0.1f } },
+                    { MinecartLeft,     { 0.0f, 0.9f, 0.9f } },
+                    { MinecartRight,    { 0.0f, 0.9f, 0.9f } },
+                    { MonkeySwing,      { 0.9f, 0.9f, 0.4f } },
+                    { ClimbableUp,      { 0.0f, 0.9f, 0.0f, 0.6f } },
+                    { ClimbableDown,    { 0.0f, 0.9f, 0.0f, 0.6f } },
+                    { ClimbableRight,   { 0.0f, 0.9f, 0.0f, 0.6f } },
+                    { ClimbableLeft,    { 0.0f, 0.9f, 0.0f, 0.6f } },
+                };
+            }
+
             MapRenderer::MapRenderer(const ComPtr<ID3D11Device>& device, const graphics::IShaderStorage& shader_storage, int width, int height)
                 : _device(device),
                 _window_width(width), 
@@ -86,13 +104,13 @@ namespace trview
                     const float thickness = _DRAW_SCALE / 4;
 
                     if (tile.sector->flags & SectorFlag::ClimbableUp)
-                        draw(context, tile.position, Size(tile.size.width, thickness), default_colours[SectorFlag::ClimbableUp]);
+                        draw(context, tile.position, Size(tile.size.width, thickness), default_colours.at(SectorFlag::ClimbableUp));
                     if (tile.sector->flags & SectorFlag::ClimbableRight)
-                        draw(context, Point(tile.position.x + _DRAW_SCALE - thickness, tile.position.y), Size(thickness, tile.size.height), default_colours[SectorFlag::ClimbableRight]);
+                        draw(context, Point(tile.position.x + _DRAW_SCALE - thickness, tile.position.y), Size(thickness, tile.size.height), default_colours.at(SectorFlag::ClimbableRight));
                     if (tile.sector->flags & SectorFlag::ClimbableDown)
-                        draw(context, Point(tile.position.x, tile.position.y + _DRAW_SCALE - thickness), Size(tile.size.width, thickness), default_colours[SectorFlag::ClimbableDown]);
+                        draw(context, Point(tile.position.x, tile.position.y + _DRAW_SCALE - thickness), Size(tile.size.width, thickness), default_colours.at(SectorFlag::ClimbableDown));
                     if (tile.sector->flags & SectorFlag::ClimbableLeft)
-                        draw(context, tile.position, Size(thickness, tile.size.height), default_colours[SectorFlag::ClimbableLeft]);
+                        draw(context, tile.position, Size(thickness, tile.size.height), default_colours.at(SectorFlag::ClimbableLeft));
 
                     // If sector is a down portal, draw a transparent black square over it 
                     if (tile.sector->flags & SectorFlag::RoomBelow)
@@ -105,7 +123,7 @@ namespace trview
             }
 
             void 
-            MapRenderer::draw(const ComPtr<ID3D11DeviceContext>& context, Point p, Size s, Color c)
+            MapRenderer::draw(const ComPtr<ID3D11DeviceContext>& context, Point p, Size s, const Color& c)
             {
                 _sprite.render(context, _texture, p.x, p.y, s.width, s.height, c); 
             }

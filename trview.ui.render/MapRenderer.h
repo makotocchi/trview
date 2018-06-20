@@ -7,7 +7,6 @@
 #include <vector> 
 #include <memory>
 #include <algorithm>
-#include <map>
 
 #include <trview.graphics/Sprite.h>
 #include "trview\Types.h"
@@ -40,20 +39,6 @@ namespace trview
                     std::shared_ptr<Sector> sector; 
                     Point position; 
                     Size size; 
-                };
-
-                std::map<SectorFlag, DirectX::SimpleMath::Color> default_colours = {
-                    { Portal, { 0.0f, 0.0f, 0.0f } }, 
-                    { Wall, { 0.4f, 0.4f, 0.4f } }, 
-                    { Trigger, { 1.0f, 0.3f, 0.7f } },
-                    { Death, { 0.9f, 0.1f, 0.1f } },
-                    { MinecartLeft, { 0.0f, 0.9f, 0.9f } },
-                    { MinecartRight, { 0.0f, 0.9f, 0.9f } },
-                    { MonkeySwing, { 0.9f, 0.9f, 0.4f } },
-                    { ClimbableUp, { 0.0f, 0.9f, 0.0f, 0.6f } },
-                    { ClimbableDown, { 0.0f, 0.9f, 0.0f, 0.6f } },
-                    { ClimbableRight, { 0.0f, 0.9f, 0.0f, 0.6f } },
-                    { ClimbableLeft, { 0.0f, 0.9f, 0.0f, 0.6f } },
                 };
             }
 
@@ -96,7 +81,7 @@ namespace trview
                 Size get_size() const;
 
                 // Draws a square at given position, size with given colour.
-                void draw(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& context, Point p, Size s, DirectX::SimpleMath::Color c);
+                void draw(const Microsoft::WRL::ComPtr<ID3D11DeviceContext>& context, Point p, Size s, const DirectX::SimpleMath::Color& c);
 
                 // Update the stored positions of the corners of the map.
                 void update_map_position();
