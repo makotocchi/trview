@@ -12,6 +12,7 @@
 
 #include <trview.common/Point.h>
 #include <trview.common/Size.h>
+#include <trview.common/Event.h>
 #include <trview.graphics/RenderTarget.h>
 #include <trview.graphics/Sprite.h>
 #include <trview.graphics/Texture.h>
@@ -87,6 +88,10 @@ namespace trview
                 /// @param width The width of the host window.
                 /// @param height The height of the host window.
                 void set_window_size(int width, int height);
+
+                /// Event raised when a sector is hovered over. 
+                /// The x and z index of the sector are passed as parameters.
+                Event<uint32_t, uint32_t> on_sector_hover;
             private:
                 /// Returns the sector under the specified position, or nullptr if none.
                 /// @param point The point to test.
