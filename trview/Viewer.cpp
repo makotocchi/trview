@@ -109,6 +109,10 @@ namespace trview
         {
             const auto text = L"X: " + std::to_wstring(x) + L", Z:" + std::to_wstring(z);
             debug_label_ptr->set_text(text);
+
+            const auto room = _current_level->get_room(_level->selected_room());
+            const DirectX::SimpleMath::Vector3 pos(room.info.x / 1024.0f + x, 0, room.info.z / 1024.0f + z);
+            _highlight_center = pos;
         };
         _map_renderer->on_sector_hover_end += [=]()
         {
@@ -445,6 +449,10 @@ namespace trview
                 _camera.set_target(_level->room(_level->selected_room())->centre());
             }
             _level->render(_device.context(), current_camera());
+
+            // Render the sector highlight (this may need to be in level at some point for transparency).
+            auto wvp = DirectX::SimpleMath::Matrix::CreateTranslation(_highlight_center) * current_camera().view_projection();
+            // _highlight_mesh->render(_device.context(), wvp, *_texture_storage.get(), DirectX::SimpleMath::Color(1.0f, 1.0f, 1.0f));
         }
     }
 

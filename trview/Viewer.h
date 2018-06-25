@@ -139,6 +139,10 @@ namespace trview
         UserSettings _settings;
         ui::Label* _picking;
         Level::PickResult _current_pick;
+
+        // Sector highlight current implementation.
+        DirectX::SimpleMath::Vector3 _highlight_center{ 0,0,0 };
+        std::unique_ptr<Mesh> _highlight_mesh;
     };
 }
 
